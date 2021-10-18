@@ -1,14 +1,22 @@
 <template>
 	<div id="app">
+		<Header title="Gerenciamento de Produção"
+		:hideUserDropdown="!user"/>
 		<Content />
+		<Footer />
 	</div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
+import Header from "./components/template/Header.vue"
 import Content from "./components/template/Content.vue"
+import Footer from "./components/template/Footer.vue"
+
 export default {
 	name: "App",
-	components: {Content}
+	components: {Header, Content, Footer},
+	computed: mapState(['user'])
 }
 </script>
 
