@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<Header title="Gerenciamento de Produção"
-		/>
+		:hideUserDropdown="!user"/>
 		<Content />
 		<Footer />
 	</div>

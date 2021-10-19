@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
 import {mapState} from 'vuex'
 import {chave} from '@/global'
 
@@ -21,7 +22,7 @@ export default {
         logout(){
             localStorage.removeItem(chave)
             this.$store.commit('setUser', null)
-            this.$router.push({name: 'auth'})
+            this.$router.push({name: '/auth'})
         }
     }
 }
