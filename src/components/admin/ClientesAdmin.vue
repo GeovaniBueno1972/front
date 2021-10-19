@@ -34,7 +34,7 @@
       </b-form>
       <hr>
       <b-table hover small striped :items="clientes" :fields="fields">
-          <template slot="actions" slot-scope="data"> 
+          <template #cell(actions)="data"> 
               <b-button variant="warning" @click="loadCliente(data.item)" class="mr-2">
                   <i class="fa fa-pencil"></i>
               </b-button>
