@@ -5,6 +5,7 @@ import Home from '@/components/home/Home'
 import AdminPages from '@/components/admin/AdminPages'
 import Auth from '@/components/auth/Auth'
 
+
 Vue.use(VueRouter)
 
 const routes = [{
@@ -19,7 +20,8 @@ const routes = [{
     name: 'adminPages',
     path: '/admin',
     component: AdminPages
-}]
+}
+]
 
 export default new VueRouter({
     mode: 'history',

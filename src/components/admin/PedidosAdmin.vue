@@ -1,5 +1,6 @@
 <template>
   <div class="pedidos-admin">
+           
       <b-form>
             <b-row>
               <b-col md="5" sm="12">
@@ -33,7 +34,7 @@
           <b-button variant="primary" v-if="mode === 'save'"
             @click="save">Salvar</b-button>
           <b-button variant="danger" v-if="mode === 'remove'"
-            @click="remove">Salvar</b-button>
+            @click="remove">Excluir</b-button>
           <b-button class="ml-2" @click="reset">Cancelar</b-button>
       </b-form>
       <hr>
@@ -43,19 +44,28 @@
 <script>
 import {baseApiUrl, showError} from '@/global'
 import axios from 'axios'
+import { mapGetters} from 'vuex'
 
 export default {
     name: 'PedidosAdmin',
+    computed: {
+        ...mapGetters([
+            'user'
+        ])
+    },
     data: function(){
         return {
             mode: 'save',
             clientes:[],
             pedido: {},
-            pedidos: []
+            pedidos: [],
+            userName: ''
         }
     },
     methods: {
+       
         loadClientes(){
+            axios.defaults.headers.common = {'Authorization' : `Bearer ${this.user.token}`}
             const url = `${baseApiUrl}/clientes`
             axios.get(url).then(res => {
                 this.clientes = res.data
@@ -69,6 +79,10 @@ export default {
         save(){
             const method = this.pedido.numero ? 'put' : 'post'
             const id = this.pedido.numero ? `/${this.pedido.numero}` : ''
+            
+            this.pedido.user_id = this.user.id
+            this.pedido.estado = 'Aguardando'
+            console.log(this.pedido)
             axios[method](`${baseApiUrl}/pedidos${id}`, this.pedido)
                 .then(() => {
                     this.$toasted.global.defaultSuccess()

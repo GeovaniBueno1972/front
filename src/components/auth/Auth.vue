@@ -7,7 +7,6 @@
 
             <input v-model="user.name" type="text" placeholder="Nome">
             <select v-if="showSignup" v-model="user.funcao" >
-                <option value="administracao">Administração</option>
                 <option value="producao">Operador produção</option>
                 <option value="vendedor" selected>Vendedor</option>
                 
@@ -49,6 +48,7 @@ export default {
             .then(res => {
                 this.$store.commit('setUser', res.data)
                 console.log(res.data)
+                localStorage.removeItem(chave)
                 localStorage.setItem(chave, JSON.stringify(res.data))
                 this.$router.push({path: '/home'})
             })

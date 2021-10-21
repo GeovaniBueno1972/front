@@ -6,16 +6,24 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        user: null
+        user: null,        
     },
     mutations: {
         setUser(state, user){
             state.user = user
+            
             if(user){
-                axios.defaults.headers.common['Authorization'] = `bearer ${user.token}`
+                axios.defaults.headers.common = {'Authorization' : `Bearer ${user.token}`}
+                
             }else {
                 delete axios.defaults.headers.common['Authorization']
             }
+        },
+        nomeUser(state, user){
+            state.user = user
         }
+    },
+    getters: {
+        user: state => state.user
     }
 })

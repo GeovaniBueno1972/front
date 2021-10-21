@@ -11,13 +11,14 @@
 </template>
 
 <script>
-
-import {mapState} from 'vuex'
+//import User from '../auth/user'
+import {mapGetters} from 'vuex'
 import {chave} from '@/global'
 
 export default {
     name: 'UserDropdown',
-    computed: mapState(['user']),
+    //components: {User},
+    computed: mapGetters(['user']),
     methods: {
         logout(){
             localStorage.removeItem(chave)
