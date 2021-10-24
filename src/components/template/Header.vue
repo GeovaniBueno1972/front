@@ -4,6 +4,10 @@
          <router-link to='/home'> {{ title }}</router-link>
       </h1>
       <UserDropdown v-if="!hideUserDropdown" />
+      <div id="menu">
+          <router-link to = '/pedidos' >Lançar Pedidos </router-link>
+      </div>
+      
   </header>
 </template>
 
@@ -40,5 +44,12 @@ export default {
     .title a{
         color: #fff;
         text-decoration: none;
+    }
+
+    #menu a{
+        padding: 5px;
+        background: #c5c5c5;
+        color: #fff;
+        margin-bottom: 0%;
     }
 </style>

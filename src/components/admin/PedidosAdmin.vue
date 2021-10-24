@@ -1,56 +1,42 @@
 <template>
   <div class="pedidos-admin">
            
-      <b-form>
-            <b-row>
-              <b-col md="5" sm="12">
-                  <b-form-group label="Número:" label-for="pedido-numero">
-                      <b-form-input id="pedido-numero" type="text"
-                        v-model="pedido.numero" required
-                        placeholder="Número do Pedido..." />
-                  </b-form-group>
-              </b-col>
-              <b-col md="2" sm="12">
-                  <b-form-group label="Data da Entrega:" label-for="data-entrega">
-                      <b-form-input id="data-entrega" type="date"
-                        v-model="pedido.data_entrega" required
-                        placeholder="data da Entrega..." />
-                  </b-form-group>
-              </b-col>
-              <b-col md="5" sm="12">
-                  <b-form-group label="Cliente:" label-for="pedido-cliente">
-                      <b-form-select id="pedido-cliente"  v-model="pedido.cliente_id" required>
-                        <option v-for="(cliente, id) in clientes"
-                        :key="id"
-                        :value="cliente.id"
-                        :title="cliente.name || null">
-                        {{cliente.name}}
-                        </option>
-                      </b-form-select>
-                  </b-form-group>
-              </b-col>
-          </b-row>
-          
-          <b-button variant="primary" v-if="mode === 'save'"
-            @click="save">Salvar</b-button>
-          <b-button variant="danger" v-if="mode === 'remove'"
-            @click="remove">Excluir</b-button>
-          <b-button class="ml-2" @click="reset">Cancelar</b-button>
-      </b-form>
-      <hr>
+         
+      <b-table hover small striped :items="pedidos" :fields="fields">
+          <template #cell(data_entrega)="data">
+              <b>{{convertData(data.item.data_entrega)}}</b>
+          </template>    
+          <template #cell(actions)="data"> 
+              <b-button variant="warning" @click="loadPedido(data.item)" class="mr-2">
+                  <i class="fa fa-pencil"></i>
+              </b-button>
+              <b-button variant="danger" @click="loadPedido(data.item)">
+                  <i class="fa fa-trash"></i>
+              </b-button>
+          </template>
+      </b-table>
+      
   </div>
 </template>
 
 <script>
+//import Modal from '@kouts/vue-modal'
+import moment from 'moment'
 import {baseApiUrl, showError} from '@/global'
 import axios from 'axios'
-import { mapGetters} from 'vuex'
+import { mapState, mapGetters} from 'vuex'
+moment.locale('pt-br');
+
 
 export default {
     name: 'PedidosAdmin',
+    //components: { Modal},
     computed: {
         ...mapGetters([
-            'user'
+            'user', 'pedidoAtua'
+        ]),
+        ...mapState([
+            'pedidoAtual'
         ])
     },
     data: function(){
@@ -59,38 +45,39 @@ export default {
             clientes:[],
             pedido: {},
             pedidos: [],
-            userName: ''
+            showModal: false,
+            fields: [
+                {key: 'numero', label: 'Pedido', sortable: true},
+                {key: 'data_entrega', label: 'Data Entrega', sortable: true},
+                {key: 'usuario', label: 'Vendedor'},
+                {key: 'estado', label: 'Estatus', sortable: true},
+                {key: 'actions', label: 'Ações'}
+            ]
         }
+        
     },
     methods: {
        
-        loadClientes(){
-            axios.defaults.headers.common = {'Authorization' : `Bearer ${this.user.token}`}
-            const url = `${baseApiUrl}/clientes`
+        loadPedidos(){
+            const url = `${baseApiUrl}/pedidos`
             axios.get(url).then(res => {
-                this.clientes = res.data
+                this.pedidos = res.data
             })
+            for (let index = 0; index < this.pedidos.length; index++) {
+                const element = this.pedidos[index].data_entrega;
+                console.log(element)
+                this.pedidos[index].data_entrega=this.convertData(element)
+                console.log(index)
+            }
+            
         }, 
+
         reset(){
             this.mode = 'save'
-            this.cliente = {}
-            this.loadClientes()
+            this.pedido = {}
+            this.loadPedidos()
         },
-        save(){
-            const method = this.pedido.numero ? 'put' : 'post'
-            const id = this.pedido.numero ? `/${this.pedido.numero}` : ''
-            
-            this.pedido.user_id = this.user.id
-            this.pedido.estado = 'Aguardando'
-            console.log(this.pedido)
-            axios[method](`${baseApiUrl}/pedidos${id}`, this.pedido)
-                .then(() => {
-                    this.$toasted.global.defaultSuccess()
-                    this.reset()
-                })
-                .catch(showError)
-
-        },
+               
         remove(){
             const id = this.pedido.numero
             axios.delete(`${baseApiUrl}/pedidos/${id}`)
@@ -100,17 +87,38 @@ export default {
                 })
                 .catch(showError)
         },
-        loadCliente(cliente, mode = 'save'){
-            this.mode = mode
-            this.cliente = {...cliente}
+        loadPedido(pedido){
+            this.pedido = {...pedido}
+            console.log(this.pedido.data_entrega)
+            //var dataInput = this.pedido.data_entrega;
+            //let data = new Date(dataInput);
+            //let dataFormatada = data.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                        
+            //console.log(dataFormatada)
+            this.remove()
+         },
+        convertData(dataInput){
+                let data = new Date(dataInput);
+                let dataFormatada = data.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                //console.log(dataFormatada)
+                return dataFormatada
         }
-    },
+         
+         
+     },
     mounted(){
-        this.loadClientes()
+        this.loadPedidos()
     }
 }
 </script>
 
 <style>
-
+ .fullscreen-modal {
+  width: 100%;
+  max-width: 90%;
+  top: 0;
+  margin-left: 45px;
+  
+  
+}
 </style>

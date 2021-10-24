@@ -10,11 +10,20 @@
                         placeholder="Informe o Código do Produto..." />
                   </b-form-group>
               </b-col>
-              <b-col md="9" sm="12">
-                  <b-form-group label="Nome:" label-for="user-nome">
+              <b-col md="7" sm="12">
+                  <b-form-group label="Nome:" label-for="produto-nome">
                       <b-form-input id="produto-nome" type="text"
                         v-model="produto.name" required
                         placeholder="Informe Nome do Produto..." />
+                  </b-form-group>
+              </b-col>
+              <b-col md="2" sm="12">
+                  <b-form-group label="Unidade:" label-for="produto-unidade">
+                    <select v-model="produto.unidade" >
+                        <option value="CH">Chapas => CH</option>
+                        <option value="UN" selected>Corte => UN</option>
+                        <option value="ML" selected>Metro Lineares => ML</option>
+                    </select>
                   </b-form-group>
               </b-col>
           </b-row>
@@ -54,6 +63,7 @@ export default {
                 {key: 'id', label: 'ID', sortable: true},
                 {key: 'codigo', label: 'Código', sortable: true},
                 {key: 'name', label: 'Nome'},
+                {key: 'unidade', label: 'UN'},
                 {key: 'actions', label: 'Ações'}
             ]
         }
@@ -83,7 +93,7 @@ export default {
         },
         remove(){
             const id = this.produto.id
-            axios.delete(`${baseApiUrl}/users/${id}`)
+            axios.delete(`${baseApiUrl}/materiais/${id}`)
                 .then(() => {
                     this.$toasted.global.defaultSuccess()
                     this.reset()

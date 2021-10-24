@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        user: null,        
+        user: null, 
+        pedidoAtual: null       
     },
     mutations: {
         setUser(state, user){
@@ -19,11 +20,12 @@ export default new Vuex.Store({
                 delete axios.defaults.headers.common['Authorization']
             }
         },
-        nomeUser(state, user){
-            state.user = user
+        setPedidoAtual(state, pedidoAtual){
+            state.pedidoAtual = pedidoAtual
         }
     },
     getters: {
-        user: state => state.user
+        user: state => state.user,
+        pedidoAtual: state => state.pedidoAtual
     }
 })

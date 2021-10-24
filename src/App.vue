@@ -1,9 +1,10 @@
 <template>
 	<div id="app">
-		<Header title="Gerenciamento de Produção"
+		<Header  title="Gerenciamento de Produção"
 		:hideUserDropdown="!user"/>
+		{{logado()}}
 		<Content />
-		<Footer />
+		<Footer  />
 	</div>
 </template>
 
@@ -17,7 +18,12 @@ export default {
 	name: "App",
 	components: {Header, Content, Footer},
 	computed: {
-		...mapGetters(['user'])}
+		...mapGetters(['user'])},
+	methods: {
+		logado(){
+			console.log(this.user)
+		}
+	}
 }
 </script>
 
