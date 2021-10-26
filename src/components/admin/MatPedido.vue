@@ -1,44 +1,53 @@
 <template>
   <div class="produtos-pedidos-admin">
-      <b-form>
-          <input id="produto-id" type="hidden" v-model="produto.id">
-          <b-row>
-              <b-col md="5" sm="12">
-                  <b-form-group label="Produto:" label-for="produto-id">
-                      <b-form-select id="produto-id"  v-model="produto.material_id" required>
-                        <option v-for="(material, id) in materiais"
-                        :key="id"
-                        :value="material.id"
-                        :title="material.name || null">
-                        {{material.name}}
-                        </option>
-                      </b-form-select>
-                    </b-form-group>
-                    <button type="button" class="btn btn-primary" @click="showModal=true">
-                        Novo Material
-                    </button>
-                    <Modal v-model="showModal" @after-close="loadMateriais" title="Cadastro de Materiais">
-                        <ProdutosAdmin />
+      <input id="produto-id" type="hidden" v-model="produto.id">
 
-                    </Modal>
-              </b-col>
-              <b-col md="2" sm="12">
-                  <b-form-group label="Quantidade:" label-for="produto-quantidade">
-                      <b-form-input id="produto-nome" type="text"
+      <div class="form-produto">
+            <!--Inicio Material -->
+            <div class="produto">
+            <div>
+                <label for="produto">Material:</label>
+            </div>
+            <b-form-select id="produto-id" name="produto" v-model="produto.material_id" required>
+                    <option v-for="(material, id) in materiais"
+                    :key="id"
+                    :value="material.id"
+                    :title="material.name || null">
+                    {{material.name}}
+                    </option>
+            </b-form-select>
+            <div class="novo-material">
+                <button id="btn-novo-material" type="button" class="btn btn-primary" @click="showModal=true">
+                    Novo Material
+                </button>
+                <Modal v-model="showModal" @after-close="loadMateriais" title="Cadastro de Materiais">
+                    <ProdutosAdmin />
+
+                </Modal>
+            </div>
+            </div> <!--Fim Material -->
+
+            <!--Inicio Quantidade -->
+            <div class="quantidade">
+                <div>
+                    <label for="quantidade">Qauntidade:</label>
+                </div>
+                <div>
+                    <input class="entrada" type="text" name="quantidade" 
                         v-model="produto.quantidade" required
-                        placeholder="Quantidade do Produto..." />
-                  </b-form-group>
-              </b-col>
-                <b-button  size="sm" variant="primary" v-if="mode === 'save'"
+                        placeholder="Quantidade do Produto..." >
+                </div>
+            </div><!--Fim Quantidade -->
+
+            <!--Inicio Botoes -->
+            <div class="botoes">
+                <b-button id="salvar" variant="primary" v-if="mode === 'save'"
                     @click="save">Salvar</b-button>
-                <b-button size="sm" variant="danger" v-if="mode === 'remove'"
-                    @click="remove">Excluir</b-button>
-                <b-button size="sm" class="ml-2" @click="reset">Cancelar</b-button>
-          </b-row>
-          
-          
-      </b-form>
-      <hr>
+                <b-button id="cancelar" variant="primary" @click="reset">Cancelar</b-button>
+            </div><!--Fim Botoes -->
+        </div>
+     
+    
       <b-table hover small striped :items="produtos" :fields="fields">
           <template #cell(actions)="data"> 
               <b-button variant="warning" @click="loadProduto(data.item)" class="mr-2">
@@ -135,5 +144,70 @@ export default {
 </script>
 
 <style>
+.form-produto{
+    width: 100%;
+    height: 110px;
+    margin-top: -10px;
+    padding: 10px;
+    
+    float: left;
+    
+}
 
+.produto{
+    background: white;
+    margin: 0 10px;
+    padding: 10px 5px 5px 10px;
+    width: 490px;
+    height: 80px;
+    float: left;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+}
+
+#produto-id{
+    height: 30px;
+    width: 350px;
+    float: left;
+}
+.novo-material{
+    float: left;
+    margin-left: 5px;
+}
+#btn-novo-material{
+    height: 30px;
+    padding: 5px;
+}
+.quantidade{
+    width: 250px;
+    height: 80px;
+    padding: 5px 15px;
+    float: left;
+     background: white;
+     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+}
+
+.botoes{
+    margin-left: 10px;
+    width: 180px;
+    padding: 5px 15px;
+    background: white;
+    float: left;
+    flex-direction: column;
+    display: flex;
+    height: 80px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+}
+#salvar{
+    margin-bottom: 5px;
+    height: 30px;
+    align-items: center;
+}
+#cancelar{
+    height: 30px;
+    background: coral;
+    border: none;
+}
 </style>

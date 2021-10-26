@@ -1,5 +1,5 @@
 <template>
-  <div class="auth">
+  <div class="auth-content">
       <div class="auth-modal">
             
             <hr>

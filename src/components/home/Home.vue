@@ -1,12 +1,17 @@
 <template>
     <div class="home">
-             
-        <PageTitle main="Pedidos" sub="semana" />
+        <Header  title="Gerenciamento de Produção"
+		:hideUserDropdown="!user"/>
+        <div class="pagina">
+            <PageTitle main="Pedidos" sub="semana" />
+        </div>    
+        
         
     </div>
 </template>
 
 <script>
+import Header from '../template/Header.vue'
 import PageTitle from '../template/PageTitle.vue'
 import axios from 'axios'
 import { baseApiUrl } from '@/global'
@@ -14,7 +19,7 @@ import {mapGetters} from 'vuex'
 
 export default {
     name: 'Home',
-    components: {PageTitle},
+    components: {Header, PageTitle},
     computed: mapGetters(['user']),
     
     
@@ -32,5 +37,7 @@ export default {
 </script>
 
 <style>
-
+.pagina{
+    padding: 20px;
+}
 </style>

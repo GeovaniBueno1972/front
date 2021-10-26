@@ -1,7 +1,6 @@
 <template>
 	<div id="app">
-		<Header  title="Gerenciamento de Produção"
-		:hideUserDropdown="!user"/>
+		
 		{{logado()}}
 		<Content />
 		<Footer  />
@@ -10,13 +9,13 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import Header from "./components/template/Header.vue"
+
 import Content from "./components/template/Content.vue"
 import Footer from "./components/template/Footer.vue"
 
 export default {
 	name: "App",
-	components: {Header, Content, Footer},
+	components: { Content, Footer},
 	computed: {
 		...mapGetters(['user'])},
 	methods: {
@@ -43,9 +42,8 @@ export default {
 
 		height: 100vh;
 		display: grid;
-		grid-template-rows: 70px 1fr 40px;
+		grid-template-rows: 1fr 40px;
 		grid-template-areas: 
-		"header"
 		"content"
 		"footer";
 	}
