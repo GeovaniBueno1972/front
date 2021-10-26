@@ -1,5 +1,6 @@
 <template>
     <div class="admin-pages">
+        <Header  title="Cadastro de Pedidos" :hideUserDropdown="!user"/>
         <PageTitle main='Administração do sistema' sub="controle de dados" />
         
         <div class="admin-pages-tabs">
@@ -30,11 +31,12 @@ import PedidosAdmin from './PedidosAdmin.vue'
 import ClientesAdmin from './ClientesAdmin.vue'
 import ProdutosAdmin from './ProdutosAdmin.vue'
 import UsuarioAdmin from './UsuarioAdmin.vue'
+import Header from '../template/Header.vue'
 import {mapGetters} from 'vuex'
 
 export default {
     name: 'AdminPages',
-    components: { PageTitle, PedidosAdmin, ClientesAdmin, ProdutosAdmin, UsuarioAdmin },
+    components: { Header, PageTitle, PedidosAdmin, ClientesAdmin, ProdutosAdmin, UsuarioAdmin },
     computed: {
         ...mapGetters(['user'])},
     methods: {
