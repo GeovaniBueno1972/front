@@ -4,8 +4,7 @@
 		:hideUserDropdown="!user"/>
         <div class="pagina">
             <PageTitle main="Pedidos" sub="semana" />
-            <h1>Ola</h1>
-
+           
         </div>    
          <table class="tabela">
                 <thead class="cabecalho">
@@ -18,17 +17,56 @@
                 </thead>
                 <tbody>
                     <tr v-for="pedido in pedidos" v-bind:key="pedido.numero">
-                        <td >{{pedido.estado === 'Aguardando' ? pedido.numero : null}}</td>
-                       <td >{{pedido.estado === 'Producao' ? pedido.numero : null}}</td>
-                       <td >{{pedido.estado === 'Impedimento' ? pedido.numero : null}}</td>
-                       <td >{{pedido.estado === 'Concluido' ? pedido.numero : null}}</td>
+                       <td >
+                           <div v-if="pedido.estado === 'Aguardando'" class="aguardando" @click="loadPedido(pedido)">
+                               {{pedido.numero}}</div>
+                           <div v-else>{{null}}</div>
+                       </td>
+                       <td >
+                           <div v-if="pedido.estado === 'Producao'" class="producao" @click="loadPedido(pedido)">
+                               {{pedido.numero}}</div>
+                           <div v-else>{{null}}</div>
+                       </td>
+                       <td >
+                           <div v-if="pedido.estado === 'Impedimento'" class="impedimento" @click="loadPedido(pedido)">
+                               {{pedido.numero}}</div>
+                           <div v-else>{{null}}</div>
+                       </td>
+                        <td >
+                           <div v-if="pedido.estado === 'Concluido'" class="concluido" @click="loadPedido(pedido)">
+                               {{pedido.numero}}</div>
+                           <div v-else>{{null}}</div>
+                        </td>
                         
                                                
                     </tr>
                 </tbody>
                 
             </table>
-        
+            <Modal v-model="showModal" title="Informações do Pedido">
+                <div>
+                    <div>Pedido: {{pedido.numero}}</div>
+                    <div>Cliente: {{pedido.cliente}}</div>
+                    <div>Vendedor: {{pedido.usuario}}</div>
+                    <div>Data de lançamento: {{convertData(pedido.data_lancamento)}}</div>
+                    <div>Data de entrega: <b>{{convertData(pedido.data_entrega)}}</b></div>
+                    <div>
+                        <div v-if="pedido.estado === 'Aguardando'" class="aguardando">
+                            {{pedido.estado}}
+                        </div>
+                        <div v-else-if="pedido.estado === 'Producao'" class="producao">
+                            {{pedido.estado}}
+                        </div>
+                        <div v-else-if="pedido.estado === 'Impedimento'" class="impedimento">
+                            {{pedido.estado}}
+                        </div>
+                        <div v-else-if="pedido.estado === 'Concluido'" class="concluido">
+                            {{pedido.estado}}
+                        </div>
+                    </div>
+                </div>
+
+            </Modal>
     </div>
 </template>
 
@@ -38,16 +76,18 @@ import PageTitle from '../template/PageTitle.vue'
 import axios from 'axios'
 import { baseApiUrl } from '@/global'
 import {mapGetters} from 'vuex'
+import Modal from '@kouts/vue-modal'
 
 export default {
     name: 'Home',
-    components: {Header, PageTitle},
+    components: {Header, PageTitle, Modal},
     computed: mapGetters(['user']),
     data: function(){
         return {
+            showModal: false,
             pedido: {},
             pedidos: [],
-            //showModal: false,
+           
         }
     },
     
@@ -64,19 +104,17 @@ export default {
             axios.get(url).then(res => {
                 this.pedidos = res.data
             })
-            for (let index = 0; index < this.pedidos.length; index++) {
-                const element = this.pedidos[index].data_entrega;
-                console.log(element)
-                this.pedidos[index].data_entrega=this.convertData(element)
-                console.log(index)
-            }
+            
             
         }, 
         convertData(dataInput){
                 let data = new Date(dataInput);
                 let dataFormatada = data.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-                //console.log(dataFormatada)
                 return dataFormatada
+        },
+        loadPedido(pedido){
+            this.pedido = {...pedido}
+            this.showModal=true
         },
       
   },
@@ -108,6 +146,43 @@ export default {
 }
 .tabela tbody td{
     text-align: center;
-    border: 1px solid red;
+    border-bottom: 1px solid #81817e;
+}
+.tabela tbody td:hover{
+    background: dimgrey;
+}
+.aguardando{
+    background: #A4B3BB;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.producao{
+    background: #009AF0;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.producao
+.impedimento{
+    background: #fae955;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.concluido{
+     background: #7af16a;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
