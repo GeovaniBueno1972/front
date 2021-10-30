@@ -65,7 +65,7 @@
             <!--Inicio modal Clientes-->
             <Modal
                 v-model="showModal"
-                title="Fullscreen modal"                     
+                title="Novo Cliente"                     
                 modal-class="fullscreen-modal"
                 @after-close="loadClientes()">
                     <div>
@@ -85,6 +85,10 @@
       <div v-if="pedidoAtual">
           <MatPedido />
       </div>
+      <div class="concluir">
+                <b-button id="encerrar" variant="primary" 
+                    @click="concluir">Concluir</b-button>
+        </div>
       
   </div>
 </template>
@@ -104,7 +108,7 @@ export default {
     components: {Header, MatPedido, ClientesAdmin, Modal},
     computed: {
         ...mapGetters([
-            'user', 'pedidoAtua'
+            'user', 'pedidoAtual'
         ]),
         ...mapState([
             'pedidoAtual'
@@ -133,6 +137,10 @@ export default {
             this.cliente = {}
             this.loadClientes()
         },
+        concluir(){
+            this.$store.commit('setPedidoAtual', null)
+            this.$router.push({path: '/home'})
+        },
         save(){
             const method = this.pedido.numero ? 'put' : 'post'
             const id = this.pedido.numero ? `/${this.pedido.numero}` : ''
@@ -147,9 +155,7 @@ export default {
                     this.reset()
                 })
                 .catch(showError)
-            
-
-        },
+            },
         remove(){
             const id = this.pedido.numero
             axios.delete(`${baseApiUrl}/pedidos/${id}`)
@@ -217,7 +223,7 @@ export default {
     float: left;
 }
 #btn-select{
-    height: 30px;
+    height: 40px;
 }
 .novo-cliente{
     padding: 0 5px;
@@ -225,7 +231,7 @@ export default {
 }
 
 #novo-cliente{
-    height: 30px;
+    height: 40px;
     background: cadetblue;
 }
 .numero-pedido{ 
@@ -274,5 +280,17 @@ export default {
     height: 30px;
     width: 150px;
     border: none;
+}
+.concluir{
+    margin-left: 10px;
+    width: 250px;
+    padding: 5px 15px;
+    background: white;
+    float: left;
+    flex-direction: column;
+    display: flex;
+    height: 50px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
 }
 </style>

@@ -30,7 +30,7 @@
             <!--Inicio Quantidade -->
             <div class="quantidade">
                 <div>
-                    <label for="quantidade">Qauntidade:</label>
+                    <label for="quantidade">Quantidade:</label>
                 </div>
                 <div>
                     <input class="entrada" type="text" name="quantidade" 
@@ -45,19 +45,35 @@
                     @click="save">Salvar</b-button>
                 <b-button id="cancelar" variant="primary" @click="reset">Cancelar</b-button>
             </div><!--Fim Botoes -->
+
+            
+            
         </div>
      
-    
-      <b-table hover small striped :items="produtos" :fields="fields">
-          <template #cell(actions)="data"> 
-              <b-button variant="warning" @click="loadProduto(data.item)" class="mr-2">
-                  <i class="fa fa-pencil"></i>
-              </b-button>
-              <b-button variant="danger" @click="loadProduto(data.item, 'remove')">
-                  <i class="fa fa-trash"></i>
-              </b-button>
-          </template>
-      </b-table>
+    <table id="tabela" >
+          <thead>
+              <td>Pedido</td>
+              <td>Produto</td>
+              <td>UNd</td>
+              <td>QTD</td>
+              <td>Ação</td>
+          </thead>
+          <tbody>
+              <tr v-for="produto in produtos" v-bind:key="produto.numero">
+                  <td >{{produto.pedido_numero}}</td>
+                  <td>{{produto.name}}</td>
+                  <td>{{produto.unidade}}</td>
+                  <td>{{produto.quantidade}}</td>
+                  <td>
+                        <b-button variant="danger" @click="remove(produto)">
+                            <i class="fa fa-trash"></i>
+                        </b-button>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+     
+      
   </div>
 </template>
 
@@ -81,14 +97,7 @@ export default {
             materiais: [],
             produto: {},
             produtos: [],
-            fields: [
-                {key: 'id', label: 'ID', sortable: true},
-                {key: 'pedido_numero', label: 'Pedido'},
-                //{key: 'codigo', label: 'Código', sortable: true},
-                {key: 'name', label: 'Produto'},
-                {Key: 'quantidade', label: 'Qtd'},
-                {key: 'actions', label: 'Ações'}
-            ]
+            
         }
     }, 
     methods: {
@@ -100,6 +109,7 @@ export default {
         },
         loadProdutos(){
             const id = `${this.pedidoAtual}`
+            console.log(id)
             const url = `${baseApiUrl}/materialpedidos/${id}`
             axios.get(url).then(res => {
                 this.produtos = res.data
@@ -112,7 +122,6 @@ export default {
         },
         save(){
             this.produto.pedido_numero = this.pedidoAtual
-            console.log(this.produto)
             const method = this.produto.id ? 'put' : 'post'
             const id = this.produto.id ? `/${this.produto.id}` : ''
             axios[method](`${baseApiUrl}/material_pedidos${id}`, this.produto)
@@ -121,9 +130,11 @@ export default {
                     this.reset()
                 })
                 .catch(showError)
+            this.loadProdutos()
 
         },
-        remove(){
+        remove(produto){
+            this.produto = {...produto}
             const id = this.produto.id
             axios.delete(`${baseApiUrl}/material_pedidos/${id}`)
                 .then(() => {
@@ -157,7 +168,7 @@ export default {
 .produto{
     background: white;
     margin: 0 10px;
-    padding: 10px 5px 5px 10px;
+    padding: 5px;
     width: 490px;
     height: 80px;
     float: left;
@@ -166,7 +177,7 @@ export default {
 }
 
 #produto-id{
-    height: 30px;
+    height: 40px;
     width: 350px;
     float: left;
 }
@@ -175,7 +186,7 @@ export default {
     margin-left: 5px;
 }
 #btn-novo-material{
-    height: 30px;
+    height: 40px;
     padding: 5px;
 }
 .quantidade{
@@ -209,5 +220,22 @@ export default {
     height: 30px;
     background: coral;
     border: none;
+}
+
+
+
+#tabela{
+    width: 95%;
+    margin: 2.5%;
+}
+#tabela thead{
+    background: skyblue;
+}
+td{
+    justify-content: center;
+    text-align: center;
+}
+tr{
+    border-bottom: 1px solid blue;
 }
 </style>

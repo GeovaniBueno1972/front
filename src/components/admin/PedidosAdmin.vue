@@ -90,11 +90,6 @@ export default {
         loadPedido(pedido){
             this.pedido = {...pedido}
             console.log(this.pedido.data_entrega)
-            //var dataInput = this.pedido.data_entrega;
-            //let data = new Date(dataInput);
-            //let dataFormatada = data.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-                        
-            //console.log(dataFormatada)
             this.remove()
          },
         convertData(dataInput){
