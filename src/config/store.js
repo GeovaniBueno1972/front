@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state:{
         user: null, 
-        pedidoAtual: null       
+        pedidoAtual: null,
+        pedidoStatus: 'Aguardando'       
     },
     mutations: {
         setUser(state, user){
@@ -22,10 +23,14 @@ export default new Vuex.Store({
         },
         setPedidoAtual(state, pedidoAtual){
             state.pedidoAtual = pedidoAtual
+        },
+        setPedidoStatus(state, pedidoEstado){
+            state.pedidoStatus = pedidoEstado
         }
     },
     getters: {
         user: state => state.user,
-        pedidoAtual: state => state.pedidoAtual
+        pedidoAtual: state => state.pedidoAtual,
+        pedidoStatus: state => state.pedidoStatus
     }
 })

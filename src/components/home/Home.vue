@@ -43,13 +43,10 @@
                 </tbody>
                 
             </table>
-            <Modal v-model="showModal" title="Informações do Pedido">
+            <Modal v-model="showModal" title="Informações do Pedido" 
+            @before-open="loadPedProducao(pedido.numero)"
+            @after-close="loadPedidos()">
                 <div>
-                    <div>Pedido: {{pedido.numero}}</div>
-                    <div>Cliente: {{pedido.cliente}}</div>
-                    <div>Vendedor: {{pedido.usuario}}</div>
-                    <div>Data de lançamento: {{convertData(pedido.data_lancamento)}}</div>
-                    <div>Data de entrega: <b>{{convertData(pedido.data_entrega)}}</b></div>
                     <div>
                         <div v-if="pedido.estado === 'Aguardando'" class="aguardando">
                             {{pedido.estado}}
@@ -63,6 +60,40 @@
                         <div v-else-if="pedido.estado === 'Concluido'" class="concluido">
                             {{pedido.estado}}
                         </div>
+                        <br>
+                    </div>
+                    <div>Pedido: {{pedido.numero}}</div>
+                    <div>Cliente: {{pedido.cliente}}</div>
+                    <div>Vendedor: {{pedido.usuario}}</div>
+                    <div>Data de lançamento: {{convertData(pedido.data_lancamento)}}</div>
+                    <div>Data de entrega: <b>{{convertData(pedido.data_entrega)}}</b></div>
+                    <hr>
+                    <div v-if="pedido.estado === 'Aguardando'">
+                            <b-button id="paraProducao" variant="primary" 
+                                @click="pedidoProducao(pedido)">Colocar em produção</b-button>
+                        <div class="prod" v-if="paraProducao">
+                            <Producao />
+                        </div>
+                    </div>
+                    
+                    
+                    <div v-if="pedido.estado === 'Producao'">
+                        <div>Inicio produção: {{convertData(pedProducao.data_ini_producao)}}</div>
+                        <div>Operador: {{pedProducao.operador}}</div>
+                    </div>
+                    <div v-if="pedido.estado === 'Producao'">
+                        <b-button id="paraConcluir" variant="primary" 
+                            @click="paraConcluido(pedido)">Concluir Pedido</b-button>
+                    </div>
+                    <div v-if="pedido.estado === 'Concluido'">
+                        <div>Inicio da produção: {{convertData(pedProducao.data_ini_producao)}}</div>
+                        <div>Operador: {{pedProducao.operador}}</div>
+                        <div>Fim da produção: {{convertData(pedProducao.data_conclusao)}}</div>
+                    </div>
+
+                    <div>
+                        <b-button id="fechar" variant="primary" 
+                    @click="showModal=false">Encerrar</b-button>
                     </div>
                 </div>
 
@@ -73,20 +104,28 @@
 <script>
 import Header from '../template/Header.vue'
 import PageTitle from '../template/PageTitle.vue'
+import Producao from '../cadastros/Producao.vue'
 import axios from 'axios'
 import { baseApiUrl } from '@/global'
-import {mapGetters} from 'vuex'
+import { mapState, mapGetters} from 'vuex'
 import Modal from '@kouts/vue-modal'
 
 export default {
     name: 'Home',
-    components: {Header, PageTitle, Modal},
-    computed: mapGetters(['user']),
+    components: {Header, PageTitle, Modal , Producao},
+    computed: {
+        ...mapGetters(['user']),
+        ...mapState([
+            'pedidoAtual'
+        ])
+        },
     data: function(){
         return {
             showModal: false,
+            paraProducao: false,
             pedido: {},
             pedidos: [],
+            pedProducao:{}
            
         }
     },
@@ -95,17 +134,16 @@ export default {
        console(){
            console.log(this.user)
        },
-      getStats(){
-        axios.get(`${baseApiUrl}/stats`).then(res => this.stat = res.data)
-    },
+        pedidoProducao(pedido){
+            this.$store.commit('setPedidoAtual', pedido.numero)
+            this.paraProducao = true
+        },
 
-    loadPedidos(){
+        loadPedidos(){
             const url = `${baseApiUrl}/pedidos`
             axios.get(url).then(res => {
                 this.pedidos = res.data
-            })
-            
-            
+            })              
         }, 
         convertData(dataInput){
                 let data = new Date(dataInput);
@@ -116,10 +154,32 @@ export default {
             this.pedido = {...pedido}
             this.showModal=true
         },
+        loadPedProducao(pedido){
+            console.log(pedido)
+            const url = `${baseApiUrl}/producao/${pedido}`
+            axios.get(url).then(res => {
+                this.pedProducao = res.data
+            })
+        },
+        paraConcluido(pedido){
+            console.log(pedido.numero)
+            pedido.data_conclusao = Date.now()
+            console.log(pedido.data_conclusao)
+            const url = `${baseApiUrl}/pedidos_concluido/${pedido.numero}`
+            axios.put(url, this.pedido).then(() => {
+                this.$toasted.global.defaultSuccess()
+            })
+            const url2 = `${baseApiUrl}/concluido/${pedido.numero}`
+            axios.put(url2, this.pedido).then(()=> {
+                this.$toasted.global.defaultSuccess()
+            })
+            this.showModal=false
+        }
       
   },
   mounted(){
         this.loadPedidos()
+        this.paraProducao=false
     }
 }
     
@@ -168,7 +228,9 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.producao
+.prod{
+    background: white;
+}
 .impedimento{
     background: #fae955;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -184,5 +246,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+#fechar{
+    background: green;
+    margin-top: 5px;
+    width: 100%;
 }
 </style>
