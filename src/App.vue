@@ -3,7 +3,9 @@
 		
 		{{logado()}}
 		<Content />
+		<!--
 		<Footer  />
+		-->
 	</div>
 </template>
 
@@ -11,11 +13,11 @@
 import {mapGetters} from 'vuex'
 
 import Content from "./components/template/Content.vue"
-import Footer from "./components/template/Footer.vue"
+//import Footer from "./components/template/Footer.vue"
 
 export default {
 	name: "App",
-	components: { Content, Footer},
+	components: { Content, },
 	computed: {
 		...mapGetters(['user'])},
 	methods: {

@@ -112,5 +112,7 @@ export default {
 </script>
 
 <style>
-
+b-table{
+    justify-content: left;
+}
 </style>

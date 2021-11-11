@@ -7,9 +7,6 @@
               <b>{{convertData(data.item.data_entrega)}}</b>
           </template>    
           <template #cell(actions)="data"> 
-              <b-button variant="warning" @click="loadPedido(data.item)" class="mr-2">
-                  <i class="fa fa-pencil"></i>
-              </b-button>
               <b-button variant="danger" @click="loadPedido(data.item)">
                   <i class="fa fa-trash"></i>
               </b-button>

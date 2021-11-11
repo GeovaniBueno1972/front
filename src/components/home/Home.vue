@@ -3,8 +3,19 @@
         <Header  title="Gerenciamento de Produção"
 		:hideUserDropdown="!user"/>
         <div class="pagina">
-            <PageTitle main="Pedidos" sub="semana" />
-           
+            
+           <div id="dataIni">
+               <label for="dataIni">Data inicial:</label>
+               <input type="date" name="dataIni" v-model="datas.data_ini">
+           </div>
+           <div id="dataFin">
+               <label for="dataFin">Data final:</label>
+               <input type="date" name="dataFin" v-model="datas.data_fin">
+           </div>
+           <div id="pesquisar">
+               <b-button id="paraPesquisa" variant="primary" 
+                @click="loadPedidosPesquisa()">Pesquisar</b-button>
+           </div>
         </div>    
          <table class="tabela">
                 <thead class="cabecalho">
@@ -18,23 +29,67 @@
                 <tbody>
                     <tr v-for="pedido in pedidos" v-bind:key="pedido.numero">
                        <td >
-                           <div v-if="pedido.estado === 'Aguardando'" class="aguardando" @click="loadPedido(pedido)">
-                               {{pedido.numero}}</div>
+                            <div id="card" v-if="pedido.estado === 'Aguardando'" class="aguardando" @click="loadPedido(pedido)">
+                               <div id="card-data">
+                                    <div class="numero">
+                                        <h6>{{pedido.numero}}</h6>
+                                    </div>
+                                    <div class="data">
+                                        <h6>{{convertData(pedido.data_entrega)}}</h6>
+                                    </div>
+                               </div>
+                               <div class="nome">
+                                    {{pedido.cliente}}
+                               </div>                                
+                            </div>
                            <div v-else>{{null}}</div>
                        </td>
                        <td >
-                           <div v-if="pedido.estado === 'Producao'" class="producao" @click="loadPedido(pedido)">
-                               {{pedido.numero}}</div>
+                           <div id="card" v-if="pedido.estado === 'Producao'" class="producao" @click="loadPedido(pedido)">
+                                <div id="card-data">
+                                    <div class="numero">
+                                        <h6>{{pedido.numero}}</h6>
+                                    </div>
+                                    <div class="data">
+                                        <h6>{{convertData(pedido.data_entrega)}}</h6>
+                                    </div>
+                               </div>
+                               <div class="nome">
+                                    {{pedido.cliente}}
+                               </div> 
+                            </div>
                            <div v-else>{{null}}</div>
                        </td>
                        <td >
-                           <div v-if="pedido.estado === 'Impedimento'" class="impedimento" @click="loadPedido(pedido)">
-                               {{pedido.numero}}</div>
+                           <div id="card" v-if="pedido.estado === 'Impedimento'" class="impedimento" @click="loadPedido(pedido)">
+                               <div id="card-data">
+                                    <div class="numero">
+                                        <h6>{{pedido.numero}}</h6>
+                                    </div>
+                                    <div class="data">
+                                        <h6>{{convertData(pedido.data_entrega)}}</h6>
+                                    </div>
+                               </div>
+                               <div class="nome">
+                                    {{pedido.cliente}}
+                               </div> 
+                            </div>
                            <div v-else>{{null}}</div>
                        </td>
                         <td >
-                           <div v-if="pedido.estado === 'Concluido'" class="concluido" @click="loadPedido(pedido)">
-                               {{pedido.numero}}</div>
+                           <div id="card" v-if="pedido.estado === 'Concluido'" class="concluido" @click="loadPedido(pedido)">
+                                <div id="card-data">
+                                    <div class="numero">
+                                        <h6>{{pedido.numero}}</h6>
+                                    </div>
+                                    <div class="data">
+                                        <h6>{{convertData(pedido.data_entrega)}}</h6>
+                                    </div>
+                               </div>
+                               <div class="nome">
+                                    {{pedido.cliente}}
+                               </div>   
+                            </div>
                            <div v-else>{{null}}</div>
                         </td>
                         
@@ -103,16 +158,17 @@
 
 <script>
 import Header from '../template/Header.vue'
-import PageTitle from '../template/PageTitle.vue'
+//import PageTitle from '../template/PageTitle.vue'
 import Producao from '../cadastros/Producao.vue'
 import axios from 'axios'
 import { baseApiUrl } from '@/global'
 import { mapState, mapGetters} from 'vuex'
 import Modal from '@kouts/vue-modal'
 
+
 export default {
     name: 'Home',
-    components: {Header, PageTitle, Modal , Producao},
+    components: {Header, Modal , Producao},
     computed: {
         ...mapGetters(['user']),
         ...mapState([
@@ -125,7 +181,8 @@ export default {
             paraProducao: false,
             pedido: {},
             pedidos: [],
-            pedProducao:{}
+            pedProducao:{},
+            datas:{}
            
         }
     },
@@ -137,6 +194,14 @@ export default {
         pedidoProducao(pedido){
             this.$store.commit('setPedidoAtual', pedido.numero)
             this.paraProducao = true
+        },
+
+        loadPedidosPesquisa(){
+            console.log(this.datas)
+            const url = `${baseApiUrl}/pedidos_pesquisa`
+            axios.post(url, this.datas).then(res => {
+                this.pedidos = res.data
+            })              
         },
 
         loadPedidos(){
@@ -191,8 +256,8 @@ export default {
     padding: 20px;
 }
 .tabela{
-    width: 80%;
-    margin: 0 10%;
+    width: 95%;
+    margin: 0 2.5%;
 }
 .tabela table{
     border: 1px solid black;
@@ -212,11 +277,12 @@ export default {
     background: dimgrey;
 }
 .aguardando{
-    background: #A4B3BB;
+    background: #A4B5BB;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 5px;
+    padding-left: 10px;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
 }
 
@@ -225,7 +291,8 @@ export default {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 5px;
     display: flex;
-    justify-content: center;
+    padding-left: 10px;
+    justify-content: left;
     align-items: center;
 }
 .prod{
@@ -236,7 +303,8 @@ export default {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 5px;
     display: flex;
-    justify-content: center;
+    padding-left: 10px;
+    justify-content: left;
     align-items: center;
 }
 .concluido{
@@ -244,12 +312,41 @@ export default {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 5px;
     display: flex;
-    justify-content: center;
+    padding-left: 10px;
+    justify-content: left;
     align-items: center;
 }
 #fechar{
     background: green;
     margin-top: 5px;
     width: 100%;
+}
+#dataIni{
+    float: left;
+    margin-left: 110px;
+    
+}
+#dataFin{
+    float: left;
+    margin: 0 15px;
+}
+#card{
+    display: block;
+    
+}
+#card-data{
+    display: flex;
+    justify-content: space-between;
+}
+.numero{
+    float: left;
+    padding: 3px;
+}
+.data{
+    float: left;
+    padding: 3px;
+}
+.nome{
+    display: flex;
 }
 </style>
