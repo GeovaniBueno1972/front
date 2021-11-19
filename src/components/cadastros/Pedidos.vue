@@ -82,7 +82,7 @@
 
         </div><!--Fim Formulario Pedido-->
            
-      <div v-if="pedidoAtual">
+      <div v-if="pedidoSalvo">
           <MatPedido />
       </div>
       <div class="concluir">
@@ -116,6 +116,7 @@ export default {
     },
     data: function(){
         return {
+            pedidoSalvo: false,
             mode: 'save',
             clientes:[],
             pedido: {},
@@ -152,6 +153,7 @@ export default {
                 .then(() => {
                     this.$toasted.global.defaultSuccess()
                     this.setPedido()
+                    this.pedidoSalvo = true
                     this.reset()
                 })
                 .catch(showError)
@@ -174,6 +176,7 @@ export default {
         }
     },
     mounted(){
+        this.$store.commit('setPedidoAtual', null)
         this.loadClientes()
     }
 }
