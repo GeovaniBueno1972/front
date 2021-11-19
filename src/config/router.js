@@ -5,6 +5,7 @@ import Home from '@/components/home/Home'
 import AdminPages from '@/components/admin/AdminPages'
 import Auth from '@/components/auth/Auth'
 import Pedidos from '@/components/cadastros/Pedidos'
+import PedidoView from '@/components/template/PedidoView'
 
 
 Vue.use(VueRouter)
@@ -25,6 +26,10 @@ const routes = [{
     name: 'pedidos',
     path: '/pedidos',
     component: Pedidos
+}, {
+    name: 'detalhes',
+    path: '/pedidos/detalhe',
+    component: PedidoView
 }
 ]
 

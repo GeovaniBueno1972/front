@@ -3,33 +3,49 @@
         <Header  title="Gerenciamento de Produção"
 		:hideUserDropdown="!user"/>
         <div class="pagina">
+            <div id="pesquisa">
+                <b-button id="paraPesquisa" variant="primary" 
+                @click="tipoPesquisa('atualizar')">Atualizar</b-button>
+                <b-button id="paraPesquisa" variant="primary" 
+                @click="tipoPesquisa('data')">Pesquisar por Data</b-button>
+                <b-button id="paraPesquisa" variant="primary" 
+                @click="tipoPesquisa('periodo')">Pesquisar por Período</b-button>            
+            </div>
             
-           <div id="dataIni">
+           <div v-if="data || periodo" id="dataIni">
                <label for="dataIni">Data inicial:</label>
                <input type="date" name="dataIni" v-model="datas.data_ini">
            </div>
-           <div id="dataFin">
+           <div v-if="periodo" id="dataFin">
                <label for="dataFin">Data final:</label>
                <input type="date" name="dataFin" v-model="datas.data_fin">
            </div>
-           <div id="pesquisar">
+           <div v-if="data || periodo" id="pesquisar">
                <b-button id="paraPesquisa" variant="primary" 
                 @click="loadPedidosPesquisa()">Pesquisar</b-button>
            </div>
-        </div>    
-         <table class="tabela">
+        </div>
+        <div class="topo">
+            <h5>Aguardando</h5>
+            <h5>Em Produção</h5>
+            <h5>Impedimento</h5>
+            <h5>Concluído</h5>
+        </div>
+        <div class="containerTabela">
+            <table class="tabela" >
                 <thead class="cabecalho">
-                    <tr>
+                    <tr hidden=true>
                         <td>Aguardando</td>
                         <td>Em Produção</td>
                         <td>Impedimento</td>
                         <td>Concluído</td>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     <tr v-for="pedido in pedidos" v-bind:key="pedido.numero">
                        <td >
-                            <div id="card" v-if="pedido.estado === 'Aguardando'" class="aguardando" @click="loadPedido(pedido)">
+                            <div id="card" v-if="pedido.estado === 'Aguardando'" class="aguardando" @click="loadPedido(pedido)" 
+                                >
                                <div id="card-data">
                                     <div class="numero">
                                         <h6>{{pedido.numero}}</h6>
@@ -37,6 +53,7 @@
                                     <div class="data">
                                         <h6>{{convertData(pedido.data_entrega)}}</h6>
                                     </div>
+                                    
                                </div>
                                <div class="nome">
                                     {{pedido.cliente}}
@@ -98,9 +115,15 @@
                 </tbody>
                 
             </table>
+        </div>    
+        <div class="base">
+            <div>
+                <span>total de pedidos aguardando: {{totalPedAguardando}}</span>
+            </div>
+        </div>
             <Modal v-model="showModal" title="Informações do Pedido" 
             @before-open="loadPedProducao(pedido.numero)"
-            @after-close="loadPedidos()">
+            @after-close="loadPedidosPesquisa()">
                 <div>
                     <div>
                         <div v-if="pedido.estado === 'Aguardando'" class="aguardando">
@@ -122,6 +145,7 @@
                     <div>Vendedor: {{pedido.usuario}}</div>
                     <div>Data de lançamento: {{convertData(pedido.data_lancamento)}}</div>
                     <div>Data de entrega: <b>{{convertData(pedido.data_entrega)}}</b></div>
+                    <router-link to='/pedidos/detalhe' class="link"> Ver Pedido </router-link>
                     <hr>
                     <div v-if="pedido.estado === 'Aguardando'">
                             <b-button id="paraProducao" variant="primary" 
@@ -164,6 +188,7 @@ import axios from 'axios'
 import { baseApiUrl } from '@/global'
 import { mapState, mapGetters} from 'vuex'
 import Modal from '@kouts/vue-modal'
+import { now } from 'moment'
 
 
 export default {
@@ -177,6 +202,10 @@ export default {
         },
     data: function(){
         return {
+            padrao: true,
+            data: false,
+            periodo: false,
+            totalPedAguardando: 0,
             showModal: false,
             paraProducao: false,
             pedido: {},
@@ -188,6 +217,22 @@ export default {
     },
     
     methods: {
+        
+        tipoPesquisa(tipo){
+            this.padrao = false
+            if (tipo === 'data') {
+                this.data = true
+                this.periodo = false
+            }else if (tipo === 'atualizar') {
+                this.padrao = true
+                this.data = false
+                this.periodo = false
+                this.loadPedidosPesquisa()
+            }else{
+                this.data = false
+                this.periodo = true
+            }
+        },
        console(){
            console.log(this.user)
        },
@@ -195,20 +240,53 @@ export default {
             this.$store.commit('setPedidoAtual', pedido.numero)
             this.paraProducao = true
         },
+        datasPadrao(){
+            let hoje = new Date(now())
+            let dataMenos = new Date()
+            let dataMais = new Date()
+            dataMenos.setDate(hoje.getDate()-5)
+            dataMais.setDate(hoje.getDate()+20)
+            this.datas.data_ini = dataMenos
+            this.datas.data_fin = dataMais
+        },
 
         loadPedidosPesquisa(){
-            console.log(this.datas)
+            console.log(this.paraProducao)
+            this.totalPedAguardando = 0
+            if (this.padrao === true) {
+                this.datasPadrao()
+                } else {
+                    if (this.data === true) {
+                    this.datas.data_fin = this.datas.data_ini
+                    }
+                }  
+            
+            
             const url = `${baseApiUrl}/pedidos_pesquisa`
             axios.post(url, this.datas).then(res => {
                 this.pedidos = res.data
-            })              
+                for (let index = 0; index < this.pedidos.length; index++) {
+                    const element = this.pedidos[index];
+                    if (element.estado === 'Aguardando') {
+                        this.totalPedAguardando ++
+                    }
+                }
+            }) 
+            this.paraProducao = false             
         },
 
         loadPedidos(){
             const url = `${baseApiUrl}/pedidos`
             axios.get(url).then(res => {
                 this.pedidos = res.data
-            })              
+                for (let index = 0; index < this.pedidos.length; index++) {
+                    const element = this.pedidos[index];
+                    if (element.estado === 'Aguardando') {
+                        this.totalPedAguardando ++
+                    }
+                }
+            }) 
+                
         }, 
         convertData(dataInput){
                 let data = new Date(dataInput);
@@ -217,19 +295,17 @@ export default {
         },
         loadPedido(pedido){
             this.pedido = {...pedido}
+            this.$store.commit('setPedidoAtual', pedido.numero)
             this.showModal=true
         },
         loadPedProducao(pedido){
-            console.log(pedido)
             const url = `${baseApiUrl}/producao/${pedido}`
             axios.get(url).then(res => {
                 this.pedProducao = res.data
             })
         },
         paraConcluido(pedido){
-            console.log(pedido.numero)
             pedido.data_conclusao = Date.now()
-            console.log(pedido.data_conclusao)
             const url = `${baseApiUrl}/pedidos_concluido/${pedido.numero}`
             axios.put(url, this.pedido).then(() => {
                 this.$toasted.global.defaultSuccess()
@@ -243,8 +319,10 @@ export default {
       
   },
   mounted(){
-        this.loadPedidos()
+        this.loadPedidosPesquisa()
         this.paraProducao=false
+        
+        
     }
 }
     
@@ -255,9 +333,15 @@ export default {
 .pagina{
     padding: 20px;
 }
+.containerTabela{
+    overflow-y: scroll;
+    height: 400px;
+}
 .tabela{
     width: 95%;
+    height: 100px;
     margin: 0 2.5%;
+    border: 1px solid red;
 }
 .tabela table{
     border: 1px solid black;
@@ -269,7 +353,18 @@ export default {
     color: darkblue;
     font-weight: bold;
 }
+.topo{
+    margin-top: 15px;
+    margin-left: 2.5%;
+    padding: 0 80px;
+    width: 94%;
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+}
+
 .tabela tbody td{
+    width: 25%;
     text-align: center;
     border-bottom: 1px solid #81817e;
 }
@@ -321,11 +416,19 @@ export default {
     margin-top: 5px;
     width: 100%;
 }
+#pesquisa{
+    padding: 0 5px;
+    float: left;
+}
+#paraPesquisa{
+    margin: 0 5px;
+    padding: 0 5px;
+}
 #dataIni{
     float: left;
-    margin-left: 110px;
-    
+    margin-left: 110px;    
 }
+
 #dataFin{
     float: left;
     margin: 0 15px;

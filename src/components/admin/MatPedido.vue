@@ -20,7 +20,9 @@
                 <button id="btn-novo-material" type="button" class="btn btn-primary" @click="showModal=true">
                     Novo Material
                 </button>
-                <Modal v-model="showModal" @after-close="loadMateriais" title="Cadastro de Materiais">
+                <Modal v-model="showModal" @after-close="loadMateriais" 
+                title="Cadastro de Materiais"
+                modal-class="fullscreen-modal">
                     <ProdutosAdmin />
 
                 </Modal>
@@ -150,6 +152,8 @@ export default {
     },
     mounted(){
         this.loadMateriais()
+        this.loadProdutos()
+        console.log(this.pedidoAtual)
     }
 }
 </script>
