@@ -17,8 +17,10 @@
                     <router-link to='/home' class="link"> Home </router-link>
                 </span>
             </li>
-            <li v-if="user.funcao === 'vendedor' || 'administracao'"> 
+            <li v-if="user.funcao === 'vendedor'"> 
+                
                 <span>
+                    {{user.funcao}}
                     <router-link to='/pedidos' class="link"> Pedidos </router-link>
                 </span>
             </li>

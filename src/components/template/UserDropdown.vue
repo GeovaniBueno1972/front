@@ -4,7 +4,7 @@
             <span class="d-nome">{{user.name}}</span>
         </div>
         <div class="user-dropdown-content">
-            <router-link to="/admin"> Administração </router-link>
+            <router-link to="/admin" v-if="user.funcao === 'administracao'"> Administração </router-link>
             <a href @click.prevent="logout">Sair</a>
         </div>
     </div>
@@ -23,7 +23,7 @@ export default {
         logout(){
             localStorage.removeItem(chave)
             this.$store.commit('setUser', null)
-            this.$router.push({name: '/auth'})
+            this.$router.push({name: '/'})
         }
     }
 }

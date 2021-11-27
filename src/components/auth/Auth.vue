@@ -67,7 +67,7 @@ export default {
     }
 
     .auth-modal {
-        background-color: white;
+        background-color: #f1962ef1;
         width: 350px;
         padding: 35px;
         box-shadow: 0 1px 5px rgba(0,0,0,0.15);

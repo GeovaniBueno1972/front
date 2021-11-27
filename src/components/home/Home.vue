@@ -2,85 +2,84 @@
     <div class="home">
         <Header  title="Gerenciamento de Produção"
 		:hideUserDropdown="!user"/>
-        <div id="pagina">
-            <div id="pesquisa">
-                <b-button id="paraPesquisa" variant="primary" 
-                @click="tipoPesquisa('atualizar')">Atualizar</b-button>
-                <b-button id="paraPesquisa" variant="primary" 
-                @click="tipoPesquisa('data')">Pesquisar por Data</b-button>
-                <b-button id="paraPesquisa" variant="primary" 
-                @click="tipoPesquisa('periodo')">Pesquisar por Período</b-button> 
-                <b-button id="paraPesquisa" variant="primary" 
-                @click="tipoPesquisa('cliente')">Pesquisar por Cliente</b-button> 
-                <b-button id="paraPesquisa" variant="primary" 
-                @click="tipoPesquisa('numero')">Pesquisar por Numero</b-button>           
-            </div>
-            <div id="linhaPesquisa">
-                <div v-if="data || periodo" id="dataIni">
-                    <label for="dataIni">Data inicial:</label>
-                    <input type="date" name="dataIni" v-model="datas.data_ini">
-                </div>
-                <div v-if="periodo" id="dataFin">
-                    <label for="dataFin">Data final:</label>
-                    <input type="date" name="dataFin" v-model="datas.data_fin">
-                </div>
-                <div v-if="data || periodo" id="pesquisar">
+        <div id="header">
+             <div id="pagina">
+                <div id="pesquisa">
                     <b-button id="paraPesquisa" variant="primary" 
-                        @click="loadPedidosPesquisa()">Pesquisar</b-button>
+                    @click="tipoPesquisa('atualizar')">Atualizar</b-button>
+                    <b-button id="paraPesquisa" variant="primary" 
+                    @click="tipoPesquisa('data')">Pesquisar por Data</b-button>
+                    <b-button id="paraPesquisa" variant="primary" 
+                    @click="tipoPesquisa('periodo')">Pesquisar por Período</b-button> 
+                    <b-button id="paraPesquisa" variant="primary" 
+                    @click="tipoPesquisa('cliente')">Pesquisar por Cliente</b-button> 
+                    <b-button id="paraPesquisa" variant="primary" 
+                    @click="tipoPesquisa('numero')">Pesquisar por Numero</b-button>           
                 </div>
-                <div v-if="cliente" id="selecionar_cliente" >
-                        <b-form-select id="btn-select" type="selct" name="pedido-cliente"  v-model="nomes.name" required> 
-                            <option v-for="(cliente, id) in clientes"
-                                    :key="id"
-                                    :value="cliente.name"
-                                    :title="cliente.name || null">
-                                    {{cliente.name}}
-                                    </option>
-                        </b-form-select> 
+                <div id="linhaPesquisa">
+                    <div v-if="data || periodo" id="dataIni">
+                        <label for="dataIni">Data inicial:</label>
+                        <input type="date" name="dataIni" v-model="datas.data_ini">
+                    </div>
+                    <div v-if="periodo" id="dataFin">
+                        <label for="dataFin">Data final:</label>
+                        <input type="date" name="dataFin" v-model="datas.data_fin">
+                    </div>
+                    <div v-if="data || periodo" id="pesquisar">
                         <b-button id="paraPesquisa" variant="primary" 
-                        @click="loadPedidosPorCliente()">Pesquisar</b-button>
+                            @click="loadPedidosPesquisa()">Pesquisar</b-button>
+                    </div>
+                    <div v-if="cliente" id="selecionar_cliente" >
+                            <b-form-select id="btn-select" type="selct" name="pedido-cliente"  v-model="nomes.name" required> 
+                                <option v-for="(cliente, id) in clientes"
+                                        :key="id"
+                                        :value="cliente.name"
+                                        :title="cliente.name || null">
+                                        {{cliente.name}}
+                                        </option>
+                            </b-form-select> 
+                            <b-button id="paraPesquisa" variant="primary" 
+                            @click="loadPedidosPorCliente()">Pesquisar</b-button>
+                    </div>
+                    <div v-if="numero" id="selecionar_pedido">
+                        <input type="text" name="numero_pedido" id="numero_pedido" v-model="numeroPedido.numero">
+                        <b-button id="paraPesquisa" variant="primary" 
+                            @click="loadPedidosPorNumero()">Pesquisar</b-button>
+                    </div>
                 </div>
-                <div v-if="numero" id="selecionar_pedido">
-                    <input type="text" name="numero_pedido" id="numero_pedido" v-model="numeroPedido.numero">
-                    <b-button id="paraPesquisa" variant="primary" 
-                        @click="loadPedidosPorNumero()">Pesquisar</b-button>
+            </div>
+
+            <div id="resumos">
+                <div id="resumo-pedidos">
+                    <span>Total de pedidos aguardando: <strong>{{totalPedAguardando}}</strong> pedidos</span>
+                </div>
+                <div id="resumo-chapas">
+                    <span>Total de chapas: <strong>{{totalChapas}}</strong> chapas</span>
+                </div>
+                <div id="resumo-cortes">
+                    <span>Total de cortes: <strong>{{totalCortes}}</strong> cortes </span>
+                </div>
+                <div id="resumo-colagem">
+                    <span>Total de colagem: <strong>{{totalColagem}}</strong> metros </span>
+                </div>
+            </div>
+
+            <div class="topo">
+                <div id="topoAguardando">
+                    <h5 >Aguardando</h5>
+                </div>
+                <div  id="topoEmProducao">
+                    <h5 >Em Produção</h5>
+                </div>
+                <div id="topoImpedimento">
+                    <h5>Impedimento</h5>
+                </div>
+                <div id="topoConcluido">
+                    <h5>Concluído</h5>
                 </div>
             </div>
         </div>
-
-        <div id="resumos">
-            <div id="resumo-pedidos">
-                <span>Total de pedidos aguardando: <strong>{{totalPedAguardando}}</strong> pedidos</span>
-            </div>
-            <div id="resumo-chapas">
-                <span>Total de chapas: <strong>{{totalChapas}}</strong> chapas</span>
-            </div>
-            <div id="resumo-cortes">
-                <span>Total de cortes: <strong>{{totalCortes}}</strong> cortes </span>
-            </div>
-            <div id="resumo-colagem">
-                <span>Total de colagem: <strong>{{totalColagem}}</strong> metros </span>
-            </div>
-        </div>
-
-        <div class="topo">
-            <div id="topoAguardando">
-                <h5 >Aguardando</h5>
-            </div>
-            <div  id="topoEmProducao">
-                <h5 >Em Produção</h5>
-            </div>
-            <div id="topoImpedimento">
-                <h5>Impedimento</h5>
-            </div>
-            <div id="topoConcluido">
-                <h5>Concluído</h5>
-            </div>
-            
-            
-            
-            
-        </div>
+       
         <div class="containerTabela" overflow="scroll">
             <table class="tabela" >
                 <thead class="cabecalho">
@@ -540,7 +539,9 @@ export default {
     color: darkblue;
     font-weight: bold;
 }
+
 .topo{
+    
     margin-top: 15px;
     margin-left: 2.5%;
     width: 94%;
