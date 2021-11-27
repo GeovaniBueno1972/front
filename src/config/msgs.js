@@ -18,3 +18,15 @@ Vue.toasted.register(
     payload => !payload.msg ? 'Oops.. Erro inesperado.' : payload.msg,
     { type : 'error', icon : 'times' }
 )
+
+Vue.toasted.register(
+    'semCliente',
+    payload => !payload.msg ? 'Oops.. Esqueceu do cliente!!.' : payload.msg,
+    { type : 'error', icon : 'times' }
+)
+
+Vue.toasted.register(
+    'dataInvalida',
+    payload => !payload.msg ? 'Oops.. Data inválida!! Data de Entrega anterior a Data de hoje.' : payload.msg,
+    { type : 'error', icon : 'times' }
+)

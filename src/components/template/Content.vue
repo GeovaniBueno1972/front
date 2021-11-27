@@ -12,8 +12,8 @@ export default {
 
 <style>
     .content{
-        grid-area: content;
-        background-color: #efefef;
+        height: 90%;
+        
         
         align-items: center;
     }

@@ -101,7 +101,7 @@ import axios from 'axios'
 import { mapState, mapGetters} from 'vuex'
 import MatPedido from '../admin/MatPedido.vue'
 import ClientesAdmin from '../admin/ClientesAdmin.vue'
-
+import moment from 'moment'
 
 export default {
     name: 'Pedidos',
@@ -143,30 +143,30 @@ export default {
             this.$router.push({path: '/home'})
         },
         save(){
-            const method = this.pedido.numero ? 'put' : 'post'
-            const id = this.pedido.numero ? `/${this.pedido.numero}` : ''
+            let data = new Date()
+            if (!this.pedido.cliente_id) {
+                this.$toasted.global.semCliente()
+                }else if(moment(this.pedido.data_entrega).isBefore(data)){
+                    this.$toasted.global.dataInvalida()
+                }else{
+                    const method = this.pedido.numero ? 'put' : 'post'
+                    const id = this.pedido.numero ? `/${this.pedido.numero}` : ''
+                    this.pedido.user_id = this.user.id
+                    this.pedido.estado = 'Aguardando'
+                    axios[method](`${baseApiUrl}/pedidos${id}`, this.pedido)
+                        .then(() => {
+                            this.$toasted.global.defaultSuccess()
+                            this.setPedido()
+                            this.pedidoSalvo = true
+                            this.reset()
+                        })
+                    .catch(showError)
+                }
             
-            this.pedido.user_id = this.user.id
-            this.pedido.estado = 'Aguardando'
-            console.log(this.pedido)
-            axios[method](`${baseApiUrl}/pedidos${id}`, this.pedido)
-                .then(() => {
-                    this.$toasted.global.defaultSuccess()
-                    this.setPedido()
-                    this.pedidoSalvo = true
-                    this.reset()
-                })
-                .catch(showError)
             },
-        remove(){
-            const id = this.pedido.numero
-            axios.delete(`${baseApiUrl}/pedidos/${id}`)
-                .then(() => {
-                    this.$toasted.global.defaultSuccess()
-                    this.reset()
-                })
-                .catch(showError)
-        },
+        
+        
+
         loadCliente(cliente, mode = 'save'){
             this.mode = mode
             this.cliente = {...cliente}

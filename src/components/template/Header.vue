@@ -17,16 +17,16 @@
                     <router-link to='/home' class="link"> Home </router-link>
                 </span>
             </li>
-            <li> 
+            <li v-if="user.funcao === 'vendedor' || 'administracao'"> 
                 <span>
                     <router-link to='/pedidos' class="link"> Pedidos </router-link>
                 </span>
             </li>
-            <li> 
+            <li v-if="user.funcao === 'administracao'"> 
                 <router-link to='/admin' class="link"> Administração </router-link>
             </li> 
             <li> 
-                <router-link to='/auth' class="link"> Sair </router-link>
+                <router-link to='/' class="link"> Sair </router-link>
             </li>   
               
           </ul>
@@ -38,10 +38,13 @@
 
 <script>
 import UserDropdown from './UserDropdown.vue'
+import {mapGetters} from 'vuex'
 
 export default {
     name: 'Header',
     components: {UserDropdown},
+    computed: {
+        ...mapGetters(['user'])},
     props: {
         title: String,
         hideUserDropdown: Boolean

@@ -6,24 +6,14 @@
             <div class="auth-title"> {{showSignup ? 'Cadastro' : 'Login'}} </div>
 
             <input v-model="user.name" type="text" placeholder="Nome">
-            <select v-if="showSignup" v-model="user.funcao" >
-                <option value="producao">Operador produção</option>
-                <option value="vendedor" selected>Vendedor</option>
-                
-
-            </select>
+            
             
             <input v-model="user.password" type="password" placeholder="Senha" >
-            <input v-if="showSignup" v-model="user.confirmPassword" type="password" 
-            placeholder="Confirmando Senha">
+            
+            
+            <button  @click="signIn"> Entrar</button>
 
-            <button v-if="showSignup" @click="signUp"> Registrar </button>
-            <button v-else @click="signIn"> Entrar</button>
-
-            <a href @click.prevent="showSignup = !showSignup">
-                <span v-if="showSignup">Já tem cadastro? Acesse aqui</span>
-                <span v-else>Não tem cadastro? registre-se aqui!</span>
-            </a>
+            
         </div>
   </div>
 </template>

@@ -71,6 +71,7 @@ export default {
                 .catch(showError)
             this.$store.commit('setPedidoAtual', null)
             this.$store.commit('setPedidoStatus', 'Producao')
+            this.showModal=false
             },
     },
     mounted(){

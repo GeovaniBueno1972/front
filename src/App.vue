@@ -35,6 +35,7 @@ export default {
 
 	body{
 		margin: 0;
+		height: 100%;
 
 	}
 
@@ -43,10 +44,6 @@ export default {
 		-moz-osx-font-smoothing: grayscale;
 
 		height: 100vh;
-		display: grid;
-		grid-template-rows: 1fr 40px;
-		grid-template-areas: 
-		"content"
-		"footer";
+		
 	}
 </style>
